@@ -9,6 +9,8 @@ import {
   Picker
 } from 'react-native';
 
+import rates from '../../data/rates.json';
+
 module.exports = React.createClass({
   getInitialState() {
     console.log(rates);
@@ -25,35 +27,29 @@ module.exports = React.createClass({
         "code": "RS",
         "name": "India"
       },
-      fromCurrencyType: 'USD',
       fromCurrencyValue: '1',
       fromValue: '1',
-      toCurrencyType: 'EURO',
-      toCurrencyValue: '0.89',
-      toValue: '0.89',
+      toCurrencyValue: '75.6223',
+      toValue: '75.6223',
       selected: 'key1',
       color: 'red'
     })
   },
-  setCurrencyType(from, type) {
-    console.log(this.state.from.test, this.state.to.test);
+  setCurrencyType(isFrom, type) {
     let ratesCollection = rates;
-    console.log(type, rates);
-    let currencyModel = ratesCollection.filter(item => item.currency_code === type);
-    if(currencyModel.length === 0)
+    let currencyModel = ratesCollection.find(item => item.currency_code === type);
+    if(currencyModel === undefined)
       return;
-    if(from) {
-      let fromCurrencyType = currencyModel.currency_code;
-      let fromCurrencyValue = currencyModel.rate;
-      let toValue = this.state.toCurrencyValue / currencyModel.rate;
+    if(isFrom) {
+      this.setState({from: currencyModel});
+      let toValue = (this.state.to.rate / currencyModel.rate).toFixed(2);
       let toCurrencyValue = toValue;
-      this.setState({ fromCurrencyType, toCurrencyValue, toValue });
+      this.setState({ toCurrencyValue, toValue });
     } else {
-      let toCurrencyType = currencyModel.currency_code;
-      let fromCurrencyValue = this.state.fromCurrencyValue / currencyModel.rate;
-      let toValue = currencyModel.rate;
+      this.setState({to: currencyModel});
+      let toValue = (currencyModel.rate / this.state.from.rate).toFixed(2);
       let toCurrencyValue = toValue;
-      this.setState({ fromCurrencyType, toCurrencyValue, toValue });
+      this.setState({ toCurrencyValue, toValue });
     }
   },
   convertCurrency(from, value) {
@@ -83,8 +79,8 @@ module.exports = React.createClass({
       default:
         let input = Number.parseFloat(fromValue);
         toValue = from ?
-          this.state.toCurrencyValue*input/this.state.fromCurrencyValue:
-          this.state.fromCurrencyValue*input/this.state.toCurrencyValue;
+          this.state.to.rate*input/this.state.from.rate:
+          this.state.from.rate*input/this.state.to.rate;
           toValue = toValue.toFixed(2);
           break;
     }
@@ -124,45 +120,32 @@ module.exports = React.createClass({
 
           <TextInput
             style={styles.input}
-            placeholder={this.state.fromCurrencyType}
+            placeholder={this.state.from.currency_code}
             placeholderTextColor="#555"
-            onChangeText={(type) => {
-              this.setCurrencyType(true, type);
-              //this.setState({fromCurrencyType: type});
-              console.log(this.state.fromCurrencyType, type);
-            }}
+            onChangeText={type => this.setCurrencyType(true, type)}
             />
           <TextInput
             style={styles.input}
             placeholder={this.state.fromCurrencyValue}
             placeholderTextColor='#555'
             keyboardType='numeric'
-            onChangeText={(value) => {
-              this.convertCurrency(true, value);
-              console.log('from value: ', value);
-            }}
+            onChangeText={value => this.convertCurrency(true, value)}
             value={this.state.fromValue}
             />
         </View>
         <View style={styles.inputs}>
           <TextInput
             style={styles.input}
-            placeholder={this.state.toCurrencyType}
+            placeholder={this.state.to.currency_code}
             placeholderTextColor='#555'
-            onChangeText={(type) => {
-              this.setState({toCurrencyType: type});
-              console.log(this.state.toCurrencyType, type);
-            }}
+            onChangeText={type => this.setCurrencyType(false, type)}
             />
           <TextInput
             style={styles.input}
             placeholder={this.state.toCurrencyValue}
             placeholderTextColor='#555'
             keyboardType='numeric'
-            onChangeText={(value) => {
-              this.convertCurrency(false, value);
-              console.log('to value: ', value);
-            }}
+            onChangeText={value => this.convertCurrency(false, value)}
             value={this.state.toValue}
             />
         </View>

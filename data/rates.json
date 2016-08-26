@@ -1,0 +1,32 @@
+[
+  {
+    "currency_code": "USD",
+    "rate": 1,
+    "code": "US",
+    "name": "United States"
+  },
+  {
+    "currency_code": "EUR",
+    "rate": 0.8861,
+    "code": "EU",
+    "name": "European Union"
+  },
+  {
+    "currency_code": "GBP",
+    "rate": 0.75896,
+    "code": "GB",
+    "name": "United Kingdom"
+  },
+  {
+    "currency_code": "YER",
+    "rate": 249.95,
+    "code": "YE",
+    "name": "Yemen"
+  },
+  {
+    "currency_code": "INR",
+    "rate": 67.009,
+    "code": "RS",
+    "name": "India"
+  },
+]
