@@ -65,6 +65,7 @@ module.exports = React.createClass({
 
     return (
       <Modal
+        style={{backgroundColor:'red'}}
         animationType="slide"
         transparent={true}
         visible={this.state.isPickerShown}
@@ -72,7 +73,8 @@ module.exports = React.createClass({
         <View style={{
             flex: 1,
             justifyContent: 'flex-end',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
           }}
           >
           <View style={styles.modalContainer}>
@@ -82,6 +84,10 @@ module.exports = React.createClass({
                   Close
                 </Text>
               </TouchableOpacity>
+
+                <Text style={[styles.pickerBtnStyle, {color: 'black'}]}>
+                  {this.props.title || ''}
+                </Text>
 
               <TouchableOpacity onPress={this.donePicker}>
                 <Text style={styles.pickerBtnStyle}>
