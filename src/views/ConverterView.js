@@ -1,3 +1,9 @@
+/*
+//
+//  ConverterView.js
+//  Forex Exchange Calculator
+//
+*/
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -5,11 +11,17 @@ import {
   TextInput,
   View,
   Alert,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Image,
+  StatusBar
 } from 'react-native';
 
+//CurrencyPickerView to show the picker for both from and to currency code selection.
 import CurrencyPickerView from './CurrencyPickerView';
+//Sample data
 import rates from '../../data/rates.json';
+//import background image
+import bg from '../../data/bg.jpg';
 
 module.exports = React.createClass({
 
@@ -99,111 +111,139 @@ module.exports = React.createClass({
   render() {
     return (
       //Container for From and To Currency type and values.
-      <View style={styles.container}>
-        <View style={styles.flexRow}>
-          <View style={styles.container}>
+      <Image source={bg} style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+        />
+        <Text style={[styles.flexRow, styles.textStyle, {padding: 15, textAlign: 'center', backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)' }]}>
+          Fx Currency Calculator
+        </Text>
+        <Text style={[styles.flexRow, styles.textStyle, {fontSize: 15, marginLeft:10, marginTop:0, paddingBottom:0}]}>
+          {this.state.from.name} to {this.state.to.name} {`\n`}
+          1 {this.state.from.currency_code} = {this.state.toCurrencyValue} {this.state.to.currency_code}
+        </Text>
+        <View style={[styles.flexRow, {paddingTop:0}]}>
+          <View style={styles.flexColumn}>
             <TouchableWithoutFeedback
               style={{flex:1,flexDirection:'row'}}
               onPress={() => this.refs.fromPicker.show()}
               >
               <View style={styles.boxViewStyle}>
-                <Text numberOfLines={1} style={styles.textStyle}>{this.state.from.currency_code}</Text></View>
+                <Text style={[styles.textStyle, {fontSize: 15}]}>From:</Text>
+                <Text
+                  numberOfLines={1}
+                  style={styles.textStyle}>{this.state.from.currency_code}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+            <CurrencyPickerView
+              ref={'fromPicker'}
+              selectedValue={this.state.fromSelectedOption}
+              options={this.ratesList}
+              onSubmit={(option) => {
+                this.setState({
+                  fromSelectedOption: option
+                });
+                this.setCurrencyType(true, option);
+              }}
+              />
+          </View>
+          <View style={styles.flexColumn}>
+            <TextInput
+              style={styles.textInputStyle}
+              placeholder={this.state.fromCurrencyValue}
+              placeholderTextColor='#999'
+              keyboardType='numeric'
+              onChangeText={value => this.convertCurrency(true, value)}
+              value={this.state.fromValue}
+              />
+          </View>
+        </View>
+
+
+        <View style={styles.flexColumn}>
+          <View style={styles.flexRow}>
+            <View style={styles.flexColumn}>
+              <TouchableWithoutFeedback
+                style={{flex:1,flexDirection:'row'}}
+                onPress={() => this.refs.toPicker.show()}
+                >
+                <View style={styles.boxViewStyle}>
+                  <Text style={[styles.textStyle, {fontSize: 15}]}>To:    </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={styles.textStyle}>{this.state.to.currency_code}
+                  </Text>
+                </View>
               </TouchableWithoutFeedback>
               <CurrencyPickerView
-                ref={'fromPicker'}
-                selectedValue={this.state.fromSelectedOption}
+                ref={'toPicker'}
+                selectedValue={this.state.toSelectedOption}
                 options={this.ratesList}
                 onSubmit={(option) => {
                   this.setState({
                     fromSelectedOption: option
                   });
-                  this.setCurrencyType(true, option);
+                  this.setCurrencyType(false, option);
                 }}
                 />
             </View>
-            <View style={styles.container}>
+            <View style={styles.flexColumn}>
               <TextInput
                 style={styles.textInputStyle}
-                placeholder={this.state.fromCurrencyValue}
-                placeholderTextColor='#555'
+                placeholder={this.state.toCurrencyValue}
+                placeholderTextColor='#999'
                 keyboardType='numeric'
-                onChangeText={value => this.convertCurrency(true, value)}
-                value={this.state.fromValue}
+                onChangeText={value => this.convertCurrency(false, value)}
+                value={this.state.toValue}
                 />
             </View>
           </View>
 
 
-          <View style={styles.container}>
-            <View style={styles.flexRow}>
-              <View style={styles.container}>
-                <TouchableWithoutFeedback
-                  style={{flex:1,flexDirection:'row'}}
-                  onPress={() => this.refs.toPicker.show()}
-                  >
-                  <View style={styles.boxViewStyle}>
-                    <Text numberOfLines={1} style={styles.textStyle}>{this.state.to.currency_code}</Text>
-                  </View>
-                </TouchableWithoutFeedback>
-                <CurrencyPickerView
-                  ref={'toPicker'}
-                  selectedValue={this.state.toSelectedOption}
-                  options={this.ratesList}
-                  onSubmit={(option) => {
-                    this.setState({
-                      fromSelectedOption: option
-                    });
-                    this.setCurrencyType(false, option);
-                  }}
-                  />
-              </View>
-              <View style={styles.container}>
-                <TextInput
-                  style={styles.textInputStyle}
-                  placeholder={this.state.toCurrencyValue}
-                  placeholderTextColor='#555'
-                  keyboardType='numeric'
-                  onChangeText={value => this.convertCurrency(false, value)}
-                  value={this.state.toValue}
-                  />
-              </View>
-            </View>
-          </View>
-        </View>
-      )
-    }
-  });
 
-  //Basic styles for ConverterView screen.
-  const styles = StyleSheet.create({
-    container: {
-      flex:1,
-      backgroundColor: '#049fd9'
-    },
-    flexColumn: {
-      flex:1
-    },
-    flexRow:{
-      flexDirection: 'row',
-      paddingTop: 20
-    },
-    boxViewStyle: {
-      flex:1, flexDirection:'row',
-      borderWidth:1, borderRadius: 8, borderColor: '#e8ebf1',
-      alignItems: 'center',
-      margin: 10
-    },
-    textStyle:{
-      textAlign:'left',
-      fontSize:25,
-      padding:5,
-      color:'#ffffff'
-    },
-    textInputStyle: {
-      height: 50,
-      textAlign: 'right',
-      borderWidth:1, borderRadius:8, borderColor: '#e8ebf1',
-      margin:10, padding: 10,
-      color:'#ffffff'
-    }
-  })
+        </View>
+      </Image>
+    )
+  }
+});
+
+//Basic styles for ConverterView screen.
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    //backgroundColor: '#049fd9'
+    width: null,
+    height: null,
+    backgroundColor: 'rgba(0,0,0,0)',
+    resizeMode: 'stretch'
+  },
+  flexColumn: {
+    flex:1
+  },
+  flexRow:{
+    flexDirection: 'row',
+    paddingTop: 20
+  },
+  boxViewStyle: {
+    flex:1, flexDirection:'row',
+    borderWidth:1, borderRadius: 8, borderColor: '#e8ebf1',
+    alignItems: 'center',
+    margin: 10,
+    backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)'
+  },
+  textStyle:{
+    textAlign:'left',
+    fontSize:25,
+    margin:5,
+    color:'#ffffff'
+  },
+  textInputStyle: {
+    height: 50,
+    textAlign: 'right',
+    borderWidth:1, borderRadius:8, borderColor: '#e8ebf1',
+    margin:10, padding: 10,
+    color:'#ffffff',
+    backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)'
+  }
+})

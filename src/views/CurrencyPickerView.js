@@ -128,7 +128,8 @@ const styles = StyleSheet.create({
     width: SCREEN.WIDTH,
     padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#64bbe3',
+    borderTopWidth: 1,
+    borderColor: '#64bbe3',
     justifyContent: 'space-between'
   },
   pickerBtnStyle: {
