@@ -60,13 +60,15 @@ module.exports = React.createClass({
     return;
     if(isFrom) {
       this.setState({from: currencyModel});
-      let toValue = (this.state.to.rate / currencyModel.rate).toFixed(2);
-      let toCurrencyValue = toValue;
+      let toCurrencyValue = (this.state.to.rate / currencyModel.rate).toFixed(2);
+      let toValue = (toCurrencyValue * (this.state.fromValue || 1) ).toFixed(2);
+      toValue = this.state.fromValue === "" ? "" : toValue;
       this.setState({ toCurrencyValue, toValue });
     } else {
       this.setState({to: currencyModel});
-      let toValue = (currencyModel.rate / this.state.from.rate).toFixed(2);
-      let toCurrencyValue = toValue;
+      let toCurrencyValue = (currencyModel.rate / this.state.from.rate).toFixed(2);
+      let toValue = (toCurrencyValue * (this.state.fromValue || 1)).toFixed(2);
+      toValue = this.state.fromValue === "" ? "" : toValue;
       this.setState({ toCurrencyValue, toValue });
     }
   },
@@ -90,15 +92,15 @@ module.exports = React.createClass({
     //Incase value in empty, set the state to default for the given from and to currency types.
     switch (fromValue) {
       case '':
-      fromValue = '';
-      toValue = '';
+        fromValue = '';
+        toValue = '';
       break;
       default:
-      let input = Number.parseFloat(fromValue);
-      toValue = from ?
-      this.state.to.rate*input/this.state.from.rate:
-      this.state.from.rate*input/this.state.to.rate;
-      toValue = toValue.toFixed(2);
+        let input = Number.parseFloat(fromValue);
+        toValue = from ?
+        this.state.to.rate*input/this.state.from.rate:
+        this.state.from.rate*input/this.state.to.rate;
+        toValue = toValue.toFixed(2);
       break;
     }
 
@@ -115,10 +117,10 @@ module.exports = React.createClass({
         <StatusBar
           barStyle="light-content"
         />
-        <Text style={[styles.flexRow, styles.textStyle, {padding: 15, textAlign: 'center', backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)' }]}>
+      <Text style={[styles.flexRow, styles.textStyle, styles.headerStyle]}>
           Fx Currency Calculator
         </Text>
-        <Text style={[styles.flexRow, styles.textStyle, {fontSize: 15, marginLeft:10, marginTop:0, paddingBottom:0}]}>
+        <Text style={[styles.flexRow, styles.textStyle, styles.messageStyle]}>
           {this.state.from.name} to {this.state.to.name} {`\n`}
           1 {this.state.from.currency_code} = {this.state.toCurrencyValue} {this.state.to.currency_code}
         </Text>
@@ -218,32 +220,44 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0)',
     resizeMode: 'stretch'
   },
-  flexColumn: {
-    flex:1
+  headerStyle: {
+    margin: 0,
+    padding: 15,
+    textAlign: 'center',
+    backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)'
   },
-  flexRow:{
+  flexColumn: {
+    flex: 1
+  },
+  flexRow: {
     flexDirection: 'row',
     paddingTop: 20
   },
+  messageStyle: {
+    fontSize: 15,
+    marginLeft: 10,
+    marginTop: 0,
+    paddingBottom: 0
+  },
   boxViewStyle: {
-    flex:1, flexDirection:'row',
-    borderWidth:1, borderRadius: 8, borderColor: '#e8ebf1',
+    flex: 1, flexDirection:'row',
+    borderWidth: 1, borderRadius: 8, borderColor: '#e8ebf1',
     alignItems: 'center',
     margin: 10,
     backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)'
   },
   textStyle:{
-    textAlign:'left',
-    fontSize:25,
-    margin:5,
+    textAlign: 'left',
+    fontSize: 25,
+    margin: 5,
     color:'#ffffff'
   },
   textInputStyle: {
     height: 50,
     textAlign: 'right',
-    borderWidth:1, borderRadius:8, borderColor: '#e8ebf1',
-    margin:10, padding: 10,
-    color:'#ffffff',
+    borderWidth: 1, borderRadius: 8, borderColor: '#e8ebf1',
+    margin: 10, padding: 10,
+    color: '#ffffff',
     backgroundColor: 'rgba(0.5, 0.5, 0.5, 0.5)'
   }
 })
