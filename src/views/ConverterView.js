@@ -51,6 +51,19 @@ module.exports = React.createClass({
     }
   },
 
+  componentWillMount() {
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardDidHide)
+  },
+
+  componentWillUnmount() {
+      this.keyboardDidHideListener.remove()
+  },
+  //TODO scrollTo implementation for keyboard
+  keyboardDidHide(e) {
+      //this.refs.scrollView.scrollTo({y: 50});
+      //this.refs.scrollView.measure((ox, oy, width, height, px, py) => this.refs.scrollView.scrollTo({y: oy - 200}));
+  },
+
   //Async service to load currency rates from services by mycurrency.
   async getCurrencyRatesApiAsync() {
     let url = ROOT_URL;
@@ -88,21 +101,27 @@ module.exports = React.createClass({
     if(currencyModel === undefined) {
       return;
     }
-    let toCurrencyValue, toValue;
+    let fromValue, toCurrencyValue, toValue;
     if(isFrom) {
-      toCurrencyValue = (this.state.to.rate / currencyModel.rate).toFixed(2);
+      toCurrencyValue = (this.state.to.rate / currencyModel.rate);
+      fromValue = ((this.state.toValue || toCurrencyValue) / toCurrencyValue).toFixed(2);
+      toCurrencyValue = toCurrencyValue.toFixed(4);
+      fromValue = this.state.toValue === '' ? '' : fromValue;
+      toValue =this.state.toValue;
       this.setState({
         from: currencyModel
       });
     } else {
+      fromValue = this.state.fromValue;
       toCurrencyValue = (currencyModel.rate / this.state.from.rate).toFixed(2);
+      toValue = ((currencyModel.rate / this.state.from.rate) * (this.state.fromValue || 1)).toFixed(2);
+      toValue = this.state.fromValue === "" ? "" : toValue;
       this.setState({
         to: currencyModel
       });
     }
-    toValue = (toCurrencyValue * (this.state.fromValue || 1)).toFixed(2);
-    toValue = this.state.fromValue === "" ? "" : toValue;
     this.setState({
+      fromValue,
       toCurrencyValue,
       toValue
     });
@@ -119,11 +138,24 @@ module.exports = React.createClass({
     if(!isValidInput && fromValue.length !== 0) {
       Alert.alert(
         'Invalid Currency input!',
-        `${value} is not a valid currency input. Please enter valid input in decimal format`
+        `${value} is not a valid currency input. Please enter valid input in decimal format`,
+        [
+          {text: 'OK', onPress: () => {
+              console.log('OK Pressed!');
+              //Reset the value and that loads default view.
+              fromValue = '';
+              this.currencyConvertCallBack(from, fromValue, toValue);
+            }
+          }
+        ]
       );
-      //Reset the value and that loads default view.
-      fromValue = '';
+
+    } else {
+      this.currencyConvertCallBack(from, fromValue, toValue);
     }
+  },
+
+  currencyConvertCallBack(from, fromValue, toValue) {
     //Incase value in empty, set the state to default for the given from and to currency types.
     switch (fromValue) {
       case '':
@@ -143,19 +175,6 @@ module.exports = React.createClass({
       [fromValue, toValue] = [toValue, fromValue];
     }
     this.setState({fromValue, toValue});
-  },
-
-  componentWillMount() {
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardDidHide)
-  },
-
-  componentWillUnmount() {
-      this.keyboardDidHideListener.remove()
-  },
-  //TODO scrollTo implementation for keyboard 
-  keyboardDidHide(e) {
-      //this.refs.scrollView.scrollTo({y: 50});
-      //this.refs.scrollView.measure((ox, oy, width, height, px, py) => this.refs.scrollView.scrollTo({y: oy - 200}));
   },
 
   render() {
