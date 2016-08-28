@@ -177,13 +177,59 @@ module.exports = React.createClass({
     this.setState({fromValue, toValue});
   },
 
+  renderCurrencySelector(label, currency_code) {
+    let isFrom = (label === 'From');
+    return (
+      <View style={styles.flexColumn}>
+        <TouchableWithoutFeedback
+          style={{flex:1,flexDirection:'row'}}
+          onPress={() => {
+            if(isFrom) {
+              this.refs.FromPicker.show();
+            } else {
+              this.refs.ToPicker.show();
+            }
+          }}
+          >
+          <View style={styles.boxViewStyle}>
+            <Text style={[styles.textStyle, {fontSize: 15}]}>{`${label}:${isFrom? '': '    '}`}</Text>
+            <Text
+              numberOfLines={1}
+              style={[styles.textStyle, {flex: 1}]}>{currency_code}
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
+        <CurrencyPickerView
+          title={`${label} Currency`}
+          ref={(`${label}Picker`)}
+          selectedValue={(isFrom ? this.state.fromSelectedOption : this.state.toSelectedOption)}
+          options={this.ratesList}
+          onSubmit={option => this.setCurrencyType(isFrom, option)}
+          />
+      </View>
+    )
+  },
+  renderCurrentInputSelector(isFrom) {
+    return (
+      <View style={styles.flexColumn}>
+        <TextInput
+          ref={isFrom ? 'fromInput' : 'toInput'}
+          style={styles.textInputStyle}
+          placeholder={isFrom ? this.state.fromCurrencyValue : this.state.toCurrencyValue}
+          placeholderTextColor='#999'
+          keyboardType='numeric'
+          onChangeText={value => this.convertCurrency(isFrom, value)}
+          value={isFrom ? this.state.fromValue : this.state.toValue}
+          //onFocus={this.scrolldown.bind(this,'fromInput')}
+          />
+      </View>
+    )
+  },
   render() {
     return (
       //Container for From and To Currency type and values.
       <Image source={bg} style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-        />
+        <StatusBar barStyle="light-content" />
       <ScrollView
         ref='scrollView'
         >
@@ -194,80 +240,21 @@ module.exports = React.createClass({
           {this.state.from.name || ''} to {this.state.to.name || ''} {`\n`}
           1 {this.state.from.currency_code} = {this.state.toCurrencyValue} {this.state.to.currency_code}
         </Text>
+
+        {/*From*/}
         <View style={[styles.flexRow, {paddingTop:0}]}>
-          <View style={styles.flexColumn}>
-            <TouchableWithoutFeedback
-              style={{flex:1,flexDirection:'row'}}
-              onPress={() => this.refs.fromPicker.show()}
-              >
-              <View style={styles.boxViewStyle}>
-                <Text style={[styles.textStyle, {fontSize: 15}]}>From:</Text>
-                <Text
-                  numberOfLines={1}
-                  style={styles.textStyle}>{this.state.from.currency_code}
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <CurrencyPickerView
-              title={'From Currency'}
-              ref={'fromPicker'}
-              selectedValue={this.state.fromSelectedOption}
-              options={this.ratesList}
-              onSubmit={option => this.setCurrencyType(true, option)}
-              />
-          </View>
-          <View style={styles.flexColumn}>
-            <TextInput
-              ref={'fromInput'}
-              style={styles.textInputStyle}
-              placeholder={this.state.fromCurrencyValue}
-              placeholderTextColor='#999'
-              keyboardType='numeric'
-              onChangeText={value => this.convertCurrency(true, value)}
-              value={this.state.fromValue}
-              //onFocus={this.scrolldown.bind(this,'fromInput')}
-              />
-          </View>
+          {this.renderCurrencySelector('From', this.state.from.currency_code)}
+          {this.renderCurrentInputSelector(true)}
         </View>
 
+        {/*To*/}
         <View style={styles.flexColumn}>
           <View style={styles.flexRow}>
-            <View style={styles.flexColumn}>
-              <TouchableWithoutFeedback
-                style={{flex:1,flexDirection:'row'}}
-                onPress={() => this.refs.toPicker.show()}
-                >
-                <View style={styles.boxViewStyle}>
-                  <Text style={[styles.textStyle, {fontSize: 15}]}>To:    </Text>
-                  <Text
-                    numberOfLines={1}
-                    style={styles.textStyle}>{this.state.to.currency_code}
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-              <CurrencyPickerView
-                title={'To Currency'}
-                ref={'toPicker'}
-                selectedValue={this.state.toSelectedOption}
-                options={this.ratesList}
-                onSubmit={option => this.setCurrencyType(false, option)}
-                />
-            </View>
-            <View style={styles.flexColumn}>
-              <TextInput
-                ref={'toInput'}
-                style={styles.textInputStyle}
-                placeholder={this.state.toCurrencyValue}
-                placeholderTextColor='#999'
-                keyboardType='numeric'
-                onChangeText={value => this.convertCurrency(false, value)}
-                value={this.state.toValue}
-                //onFocus={this.scrolldown.bind(this,'toInput')}
-                />
-            </View>
+            {this.renderCurrencySelector('To', this.state.to.currency_code)}
+            {this.renderCurrentInputSelector(false)}
           </View>
-
         </View>
+
         </ScrollView>
       </Image>
     )
