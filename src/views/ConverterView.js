@@ -138,16 +138,15 @@ module.exports = React.createClass({
     if(!isValidInput && fromValue.length !== 0) {
       Alert.alert(
         'Invalid Currency input!',
-        `${value} is not a valid currency input. Please enter valid input in decimal format`,
-        [
-          {text: 'OK', onPress: () => {
+        `${value} is not a valid currency input. Please enter valid amount.`,
+        [{
+          text: 'OK', onPress: () => {
               console.log('OK Pressed!');
               //Reset the value and that loads default view.
               fromValue = '';
               this.currencyConvertCallBack(from, fromValue, toValue);
             }
-          }
-        ]
+        }]
       );
 
     } else {

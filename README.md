@@ -14,7 +14,7 @@ https://jsfiddle.net/jagadishuppala/qpukzsbt/
 ####Service Integration and Stub Data
 Service used for integration: https://www.mycurrency.net/service/rates
 
-Data can be stubbed to test locally. To test locally use <b>stubData: true'</b>,
+Data can be stubbed to test locally. To test locally use <b>stubData: true</b>,
 
 To use the service provided by mycurrency.net change <b>stubData: false </b> in ConverterView.js.
 
