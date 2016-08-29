@@ -4,7 +4,11 @@ Global Forex Currency Converter
 
 Currency Calculator application developed in React Native to support cross-platform iPhone and Android versions.
 
-This has reusable component <b>CurrencyPickerView</b>.
+This has reusable component <b>CurrencyPickerView</b>, can be used as picker modal component.
+
+####Test Cases
+Test cases for Forex Exchange Currency Converter has been added in JSFiddle.
+https://jsfiddle.net/jagadishuppala/qpukzsbt/
 
 ####Service Integration and Stub Data
 Service used for integration: https://www.mycurrency.net/service/rates
