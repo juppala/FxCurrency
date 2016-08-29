@@ -8,6 +8,7 @@ This has reusable component <b>CurrencyPickerView</b>, can be used as picker mod
 
 ####Test Cases
 Test cases for Forex Exchange Currency Converter has been added in JSFiddle.
+- <b>React native Redux - Forex Currency Calculator TestCases</b>
 https://jsfiddle.net/jagadishuppala/qpukzsbt/
 
 ####Service Integration and Stub Data
