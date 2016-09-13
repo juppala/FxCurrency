@@ -2,7 +2,7 @@
   {
     "currency_code": "USD",
     "rate": 1,
-    "code": "US",
+    "code": "USD",
     "name": "United States"
   },
   {
@@ -26,7 +26,7 @@
   {
     "currency_code": "INR",
     "rate": 67.009,
-    "code": "RS",
+    "code": "IN",
     "name": "India"
   },
 ]

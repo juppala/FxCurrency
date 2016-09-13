@@ -32,7 +32,7 @@ module.exports = React.createClass({
   ratesList : [],
 
   //stubData to load data from rates.json for debug. Change to false to load data from ROOT_URL
-  stubData: true,
+  stubData: false,
   getInitialState() {
     return ({
       from:{},
@@ -182,6 +182,8 @@ module.exports = React.createClass({
   renderCurrencySelector(label, currency_code) {
     if (!this.state.isLoading) {
       let isFrom = (label === 'From');
+      let code = (isFrom ? this.state.from.code : this.state.to.code);
+      code = code.toLowerCase();
       return (
         <View style={styles.flexColumn}>
           <TouchableWithoutFeedback
@@ -194,12 +196,20 @@ module.exports = React.createClass({
               }
             }}
             >
-            <View style={styles.boxViewStyle}>
-              <Text style={[styles.textStyle, {fontSize: 15}]}>{`${label}:${isFrom? '': '    '}`}</Text>
+            <View style={[styles.boxViewStyle, {flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around'}]}>
+              <Text style={[styles.textStyle, {fontSize: 15}]}>{`${label}:${isFrom? '': '   '}`}</Text>
+              <Image style={{width: 30, height: 25, borderWidth:1, borderColor:'white'}}
+                source={{uri: `https://caches.space/flags/${code}.png`}}
+              />
               <Text
                 numberOfLines={1}
-                style={[styles.textStyle, {flex: 1}]}>{currency_code}
+                style={[styles.textStyle]}>{currency_code}
+
               </Text>
+
+
             </View>
           </TouchableWithoutFeedback>
           <CurrencyPickerView
